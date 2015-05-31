@@ -72,23 +72,23 @@ func (h *h) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Glob takes a range of patterns and produces a unique list
 // of matching files.
+// Files are added in pattern and alphabetical order.
 // Like filepath.Glob, but you can pass in many patterns.
 func Glob(patterns ...string) ([]string, error) {
-	matchMap := make(map[string]struct{})
+	seen := make(map[string]struct{})
+	var files []string
 	for _, g := range patterns {
 		matches, err := filepath.Glob(g)
 		if err != nil {
 			return nil, err
 		}
 		for _, match := range matches {
-			matchMap[filepath.Clean(match)] = struct{}{}
+			match = filepath.Clean(match)
+			if _, alreadySeen := seen[match]; !alreadySeen {
+				files = append(files, match)
+				seen[match] = struct{}{}
+			}
 		}
-	}
-	i := 0
-	files := make([]string, len(matchMap))
-	for match := range matchMap {
-		files[i] = match
-		i++
 	}
 	return files, nil
 }
