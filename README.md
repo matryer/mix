@@ -1,4 +1,5 @@
-# mix
+# mix [![GoDoc](https://godoc.org/github.com/downlist/mix?status.svg)](https://godoc.org/github.com/downlist/mix)
+
 
 Go http.Handler that mixes many files into one request.
 
