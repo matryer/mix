@@ -58,6 +58,7 @@ func ServeFiles(w http.ResponseWriter, r *http.Request, files ...string) {
 
 }
 
+// ServeHTTP serves the request.
 func (h *h) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// return error if something went wrong
@@ -104,6 +105,10 @@ func Handler(patterns ...string) http.Handler {
 	return h
 }
 
+// sizableBuffer is a wrapper around a bytes.Buffer that allows
+// http.ServeContent to get the content length.
+// Buffers can't normally seek, so this just simulates the behaviour
+// and returns buf.Len() when os.SEEK_END is requested.
 type sizableBuffer struct {
 	buf bytes.Buffer
 }
