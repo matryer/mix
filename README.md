@@ -1,6 +1,5 @@
 # mix [![GoDoc](https://godoc.org/github.com/downlist/mix?status.svg)](https://godoc.org/github.com/downlist/mix)
 
-
 Go http.Handler that mixes many files into one request.
 
   * Trivial to use
@@ -9,6 +8,10 @@ Go http.Handler that mixes many files into one request.
   * Uses `http.ServeContent` so all headers are managed nicely
 
 ## Usage
+
+```
+go get gopkg.in/downlist/mix.v1
+```
 
 If you have a directory containing many JavaScript files:
 
