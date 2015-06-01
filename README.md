@@ -7,6 +7,22 @@ Go http.Handler that mixes many files into one request.
   * Uses `filepath.Glob` providing familiar filepath patterns
   * Uses `http.ServeContent` so all headers are managed nicely
 
+Go from this:
+
+```
+<script src="/js/base.js"></script>
+<script src="/js/analytics.js"></script>
+<script src="/js/controls.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/api.js"></script>
+```
+
+to this:
+
+```
+<script src="/mix/all.js"></script>
+```
+
 ## Usage
 
 ```
