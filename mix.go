@@ -11,10 +11,12 @@ import (
 	"net/http"
 )
 
-type h struct {
+type Handler struct {
 	files []string
 	err   error
 }
+
+var _ http.Handler = (*Handler)(nil)
 
 // ServeFiles serves all specified files.
 // Content-Type (if not set) will be inferred from the extension in the
@@ -62,7 +64,7 @@ func ServeFiles(w http.ResponseWriter, r *http.Request, files ...string) {
 }
 
 // ServeHTTP serves the request.
-func (h *h) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// return error if something went wrong
 	if h.err != nil {
@@ -97,11 +99,11 @@ func Glob(patterns ...string) ([]string, error) {
 	return files, nil
 }
 
-// Handler makes a new mix handler with the specified files or
+// New makes a new mix handler with the specified files or
 // patterns.
-func Handler(patterns ...string) http.Handler {
+func New(patterns ...string) *Handler {
 	files, err := Glob(patterns...)
-	h := &h{
+	h := &Handler{
 		files: files,
 		err:   err,
 	}

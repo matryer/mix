@@ -13,7 +13,7 @@ import (
 func TestMixHandler(t *testing.T) {
 	is := is.New(t)
 
-	h := mix.Handler("./test/one.js", "./test/*.js")
+	h := mix.New("./test/one.js", "./test/*.js")
 
 	w := httptest.NewRecorder()
 	r, err := http.NewRequest("GET", "/assets/all.js", nil)
