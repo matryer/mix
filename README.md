@@ -28,7 +28,7 @@ files/
 You can use `mix.Handler` to specify filepath patterns to serve them all in a single request.
 
 ```
-http.Handle("/mix/all.js", mix.Handler("./files/js/*.js", "./files/lib/*.js"))
+http.Handle("/mix/all.js", mix.New("./files/js/*.js", "./files/lib/*.js"))
 ```
 
   * The `Content-Type` will be taken from the request path.
