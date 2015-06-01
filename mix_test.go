@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/cheekybits/is"
-	"github.com/downlist/mix"
+	"github.com/matryer/mix"
 )
 
 func TestMixHandler(t *testing.T) {

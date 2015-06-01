@@ -43,6 +43,7 @@ func New(patterns ...string) *Handler {
 // ClearHeaders clears the X-Mix* headers.
 func (h *Handler) ClearHeaders() *Handler {
 	h.Header = make(http.Header)
+	return h
 }
 
 // ServeFiles serves all specified files.
