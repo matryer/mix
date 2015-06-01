@@ -32,3 +32,9 @@ http.Handle("/mix/all.js", mix.New("./files/js/*.js", "./files/lib/*.js"))
 ```
 
   * The `Content-Type` will be taken from the request path.
+
+### Notes
+
+#### App engine
+
+It's important to remember that files marked as static with `static_dir` or `static_file` in App Engine are *not* available to your Go code. So mix cannot work on those files. Instead, you should structure your app so that mixable content lives in a different directory to your static files.
