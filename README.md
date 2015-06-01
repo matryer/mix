@@ -10,7 +10,7 @@ Go http.Handler that mixes many files into one request.
 ## Usage
 
 ```
-go get gopkg.in/downlist/mix.v1
+go get gopkg.in/matryer/mix.v1
 ```
 
 If you have a directory containing many JavaScript files:
