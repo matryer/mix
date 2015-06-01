@@ -50,7 +50,10 @@ func ServeFiles(w http.ResponseWriter, r *http.Request, files ...string) {
 		}
 
 		// write linefeed
-		buf.WriteRune('\n')
+		if _, err := buf.WriteRune('\n'); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 	}
 
