@@ -3,20 +3,47 @@ package mix
 import (
 	"bytes"
 	"io"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
-
-	"net/http"
 )
 
+// Handler is a http.Handler that mixes files.
 type Handler struct {
 	files []string
 	err   error
+
+	// Header allows you to set common response headers that will be
+	// send with requests handled by this Handler.
+	// Use ClearHeaders() to reset default headers.
+	Header http.Header
 }
 
 var _ http.Handler = (*Handler)(nil)
+
+// New makes a new mix handler with the specified files or
+// patterns.
+// By default, the following HTTP headers will be included:
+//     X-Mix-Patterns - comma separated list of patterns
+//     X-Mix-Files - comma separated list of matching files
+func New(patterns ...string) *Handler {
+	files, err := Glob(patterns...)
+	h := (&Handler{
+		files: files,
+		err:   err,
+	}).ClearHeaders()
+	h.Header.Set("X-Mix-Patterns", strings.Join(patterns, ", "))
+	h.Header.Set("X-Mix-Files", strings.Join(files, ", "))
+	return h
+}
+
+// ClearHeaders clears the X-Mix* headers.
+func (h *Handler) ClearHeaders() *Handler {
+	h.Header = make(http.Header)
+}
 
 // ServeFiles serves all specified files.
 // Content-Type (if not set) will be inferred from the extension in the
@@ -66,6 +93,13 @@ func ServeFiles(w http.ResponseWriter, r *http.Request, files ...string) {
 // ServeHTTP serves the request.
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
+	// set headers
+	for k, vs := range h.Header {
+		for _, v := range vs {
+			w.Header().Add(k, v)
+		}
+	}
+
 	// return error if something went wrong
 	if h.err != nil {
 		http.Error(w, h.err.Error(), http.StatusInternalServerError)
@@ -97,17 +131,6 @@ func Glob(patterns ...string) ([]string, error) {
 		}
 	}
 	return files, nil
-}
-
-// New makes a new mix handler with the specified files or
-// patterns.
-func New(patterns ...string) *Handler {
-	files, err := Glob(patterns...)
-	h := &Handler{
-		files: files,
-		err:   err,
-	}
-	return h
 }
 
 // sizableBuffer is a wrapper around a bytes.Buffer that allows
