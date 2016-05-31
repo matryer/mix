@@ -7,8 +7,9 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"time"
+
+	"github.com/mattn/go-zglob"
 )
 
 // Handler is a http.Handler that mixes files.
@@ -26,31 +27,21 @@ var _ http.Handler = (*Handler)(nil)
 
 // New makes a new mix handler with the specified files or
 // patterns.
-// By default, the following HTTP headers will be included:
-//     X-Mix-Patterns - comma separated list of patterns
-//     X-Mix-Files - comma separated list of matching files
+// Patterns powered by https://github.com/mattn/go-zglob.
 func New(patterns ...string) *Handler {
-	files, err := Glob(patterns...)
+	files, err := glob(patterns...)
 	h := (&Handler{
 		files: files,
 		err:   err,
-	}).ClearHeaders()
-	h.Header.Set("X-Mix-Patterns", strings.Join(patterns, ", "))
-	h.Header.Set("X-Mix-Files", strings.Join(files, ", "))
+	})
 	return h
 }
 
-// ClearHeaders clears the X-Mix* headers.
-func (h *Handler) ClearHeaders() *Handler {
-	h.Header = make(http.Header)
-	return h
-}
-
-// ServeFiles serves all specified files.
+// serveFiles serves all specified files.
 // Content-Type (if not set) will be inferred from the extension in the
 // request.
 // Uses http.ServeContent to serve the content.
-func ServeFiles(w http.ResponseWriter, r *http.Request, files ...string) {
+func serveFiles(w http.ResponseWriter, r *http.Request, files ...string) {
 
 	var recentMod time.Time
 	var buf bytes.Buffer
@@ -107,19 +98,20 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ServeFiles(w, r, h.files...)
+	serveFiles(w, r, h.files...)
 
 }
 
-// Glob takes a range of patterns and produces a unique list
+// glob takes a range of patterns and produces a unique list
 // of matching files.
 // Files are added in pattern and alphabetical order.
 // Like filepath.Glob, but you can pass in many patterns.
-func Glob(patterns ...string) ([]string, error) {
+// Uses https://github.com/mattn/go-zglob under the hood.
+func glob(patterns ...string) ([]string, error) {
 	seen := make(map[string]struct{})
 	var files []string
 	for _, g := range patterns {
-		matches, err := filepath.Glob(g)
+		matches, err := zglob.Glob(g)
 		if err != nil {
 			return nil, err
 		}
@@ -146,7 +138,7 @@ var _ io.ReadSeeker = (*sizableBuffer)(nil)
 
 func (s *sizableBuffer) Seek(offset int64, whence int) (int64, error) {
 	if whence == os.SEEK_END {
-		return int64(s.buf.Len()), nil
+		return int64(s.buf.Len()) + offset, nil
 	}
 	return 0, nil
 }
