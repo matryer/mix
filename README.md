@@ -4,7 +4,7 @@ Go http.Handler that mixes many files into one request.
 
   * Trivial to use
   * Each file will only be included once, despite how many times it might match a pattern
-  * Uses `filepath.Glob` providing familiar filepath patterns
+  * Uses [Glob (from go-zglob)](http://github.com/mattn/go-zglob) providing familiar filepath patterns
   * Uses `http.ServeContent` so all headers are managed nicely
 
 Go from this:
