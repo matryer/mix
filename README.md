@@ -26,7 +26,7 @@ to this:
 ## Usage
 
 ```
-go get gopkg.in/matryer/mix.v1
+go get gopkg.in/matryer/mix.v2
 ```
 
 If you have a directory containing many JavaScript files:
