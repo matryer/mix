@@ -19,7 +19,6 @@ type Handler struct {
 
 	// Header allows you to set common response headers that will be
 	// send with requests handled by this Handler.
-	// Use ClearHeaders() to reset default headers.
 	Header http.Header
 }
 
